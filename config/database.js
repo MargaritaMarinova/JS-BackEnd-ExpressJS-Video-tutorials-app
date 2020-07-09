@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const dbString = require('./config').dbUrl+'Tripps';
+const dbString = require('./config').dbUrl+'VideoTutorials';
 const rdyString = `${'*'.repeat(10)}Database is Ready${'*'.repeat(10)}`;//
 
 module.exports = () => {

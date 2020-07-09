@@ -1,9 +1,9 @@
 const home = require('./home');
 const users = require('./users');
-const tripps = require('./tripps');
+const models = require('./models');
 
 module.exports = {
     home,
     users,
-    tripps
+    models
 };

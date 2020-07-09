@@ -1,4 +1,3 @@
-//const User = require('./User');
 const jwt = require('../../utils/jwt');
 const {cookie} = require('../../config/config');
 const User = require('./User');

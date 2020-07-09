@@ -1,4 +1,4 @@
-const Tripps = require('../tripps');
+const Model = require('../model');
 
 module.exports = {
     get: {
