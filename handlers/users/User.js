@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const saltRound = 11;
 
 const userSchema = new Schema({
-    email: {
+    username: {
         type: String,
         required: true,
         unique: true
@@ -16,9 +16,9 @@ const userSchema = new Schema({
         required: true
     },
 
-    trippHistory: [{
+    enrolledCourses: [{
         type: ObjectId,
-        ref: 'Tripp'
+        ref: 'Course'
     }]
 });
 

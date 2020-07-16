@@ -1,5 +1,14 @@
 const {body} = require('express-validator');
 
 module.exports = {
-    //TODO
+ user: [
+     body('username')
+     .isLength({min: 5}),
+     body('password')
+     .isLength({min: 6})
+ ],
+ tutorial: [
+     body('title')
+     .isLength({min: 5})
+ ]
 }

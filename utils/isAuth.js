@@ -6,12 +6,14 @@ module.exports = (justContinue = false) => {
 
     return function (req, res, next){
         const token = req.cookies[cookie] || '';
+        
 
         jwt.verifyToken(token)
         .then((result)=>{
            User.findById(result._id).then((user)=>{
                req.user = user;
                next();
+               
            }) 
         })
         .catch((err)=>{
@@ -19,7 +21,7 @@ module.exports = (justContinue = false) => {
                 next();
                 return;
             }
-            res.redirect('/user/login');
+            res.redirect('/users/login');
         })
     }
 };

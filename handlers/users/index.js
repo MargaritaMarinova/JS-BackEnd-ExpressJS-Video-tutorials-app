@@ -20,36 +20,59 @@ module.exports = {
 
     post: {
         login(req, res, next) {
-            const {email, password} = req.body;
+            const {username, password} = req.body;
 
-            User.findOne({email})
-                .then((user) => {
-                    return Promise.all([user.passwordsMatch(password), user])
-                }).then(([match, user]) => {
-                     if(!match){
-                         next(err); //TODO add the validator
-                         return;
-                     }
+            User.findOne({username})
+            .then((user)=> {
+                return Promise.all([user.passwordsMatch(password), user])
+            }).then(([match, user])=> {
+                if (!match) {
+                    next(err);
+                    return;
+                }
 
-                     const token = jwt.createToken(user);
+                const token = jwt.createToken(user);
 
-                     res
-                     .status(201)
-                     .cookie(cookie, token, {maxAge: 3600000})
-                     .redirect('/home/');
-                })
+                res
+                .status(201)
+                .cookie(cookie, token, {maxAge: 3600000})
+                .redirect('/home/');
+            })
+            
         },
 
         register(req, res, next) {
-            const {email, password, rePassword } = req.body;
+            const {username, password, repeatPassword } = req.body;
+
+            if(password !== repeatPassword){
+                res.render('users/register.hbs', {
+                    message: "Passwords do not match!",
+                    oldInput: {username, password, repeatPassword}
+                });
+                return;
+            }
+
+            User.findOne({ username})
+            .then((currentUser)=> {
+                if (currentUser) {throw new Error('The given username is already used!')}
+                return User.create({username, password})
+            }).then((createdUser)=> {
+                res.redirect('/users/login');               
+            }).catch((err)=> {
+                res.render('users/register.hbs', {
+                    message: err.message,
+                    oldInput: {username, password, repeatPassword}
+                });
+            });
 
             User.create({
-                    email,
-                    password
+                    username,
+                    password,
+                    repeatPassword
                 })
                 .then((createdUser) => {
                     console.log(createdUser);
-                    res.redirect('/user/login');
+                    res.redirect('/users/login');
                 });
         }
     }
