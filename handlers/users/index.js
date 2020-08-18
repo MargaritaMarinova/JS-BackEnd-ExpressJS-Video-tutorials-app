@@ -15,6 +15,7 @@ module.exports = {
         logout(req, res, next){
             req.user = null,
             res.clearCookie(cookie).redirect('/home/')
+            console.log('User logged out')
         }
     },
 
