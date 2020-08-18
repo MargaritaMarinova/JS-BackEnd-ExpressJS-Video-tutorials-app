@@ -4,6 +4,6 @@ const handler = require('../handlers/home');
 const isAuth = require('../utils/isAuth');
 
 
-router.get('/', isAuth(), handler.get.home);
+router.get('/', isAuth(true), handler.get.home);
 
 module.exports = router;

@@ -1,12 +1,26 @@
+{{#if isNotLoggedIn}}
 <div class="jumbotron jumbotron-fluid">
                 <div class="container">
                     <h1 class="display-4">Video Tutorials</h1>
                     <p class="lead">Start Self-Study Today: It'll Change Your Life</p>
                 </div>
             </div>
+{{/if}}
 
             <div>
+                {{#if isLoggedIn}}
+                <h1 class="text-center">Courses</h1>
+            <section>
+                <a href="/course/create" class="btn btn-warning ">Create Course</a>
+                <form class="search float-right">
+                    <label>Search: </label>
+                    <input type="text">
+                    <input type="submit" class="btn btn-info" value="Search">
+                </form>
+            </section>
+            {{else}}
                 <h1 class="text-center">Top Courses</h1>
+                {{/if}}
                 <div class="container mt-3">
                     <div class="row d-flex justify-content-center">
 
