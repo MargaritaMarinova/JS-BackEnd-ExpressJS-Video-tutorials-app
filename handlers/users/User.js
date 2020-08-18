@@ -18,7 +18,7 @@ const userSchema = new Schema({
 
     enrolledCourses: [{
         type: ObjectId,
-        ref: 'Course'
+        ref: 'Model'
     }]
 });
 
