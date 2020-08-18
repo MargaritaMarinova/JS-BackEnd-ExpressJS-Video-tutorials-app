@@ -33,6 +33,11 @@ const modelSchema = new Schema({
         required: true
     },
 
+    creator: {
+        type: ObjectId,
+        ref: 'User'
+    },
+
     enrolledUsers: {
         type: ObjectId,
         ref: 'User'

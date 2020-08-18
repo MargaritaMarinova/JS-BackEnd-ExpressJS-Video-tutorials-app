@@ -1,14 +1,19 @@
-const model = require('../model');
+const Model = require('../model/Model');
 
 module.exports = {
     get: {
         home(req, res) {
-            const isLoggedIn = req.user !== null;
-            res.render('home/home.hbs', {
-                isLoggedIn,
-                username: req.user ? req.user.username : '',
-                isNotLoggedIn: !isLoggedIn
-            });
-            }
+            Model.find().lean().then((courses) => {
+                const isLoggedIn = req.user !== undefined;
+                res.render('home/home.hbs', {
+                    isLoggedIn,
+                    username: req.user ? req.user.username : '',
+                    isNotLoggedIn: !isLoggedIn,
+                    courses
+                });
+
+            })
+            
         }
-    };
+    }
+};
