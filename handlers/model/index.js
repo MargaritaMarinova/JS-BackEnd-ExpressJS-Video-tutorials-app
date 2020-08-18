@@ -10,8 +10,29 @@ module.exports = {
                 isLoggedIn,
                 username: req.user ? req.user.username : ''
             });
+        },
 
-        }
+        detailsCourse(req, res) {
+            const {courseId} = req.params;
+            Model
+            .findById(courseId)
+            .populate('enrolledUsers')
+            .lean()
+            .then(course => {
+                const hbsOptions = Object.keys(course).reduce((acc, curr) => {
+                    acc[curr] = course[curr];
+                    return acc;
+                }, {})
+                const isLoggedIn = (req.user !== undefined);
+
+                res.render('courses/details-course', {
+                    ...hbsOptions,
+                    isLoggedIn,
+                    username: req.user ? req.user.username : '',
+                    isTheCreator: JSON.stringify(req.user._id) === JSON.stringify(course.creator)
+                });
+            })
+        } 
     },
     post: {
         createCourse(req, res){
