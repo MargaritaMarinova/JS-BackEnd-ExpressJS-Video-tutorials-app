@@ -16,23 +16,52 @@ module.exports = {
             const {courseId} = req.params;
             Model
             .findById(courseId)
-            .populate('enrolledUsers')
+            //.populate('enrolledUsers')
             .lean()
-            .then(course => {
+            .then((course) => {
                 const hbsOptions = Object.keys(course).reduce((acc, curr) => {
                     acc[curr] = course[curr];
                     return acc;
                 }, {})
                 const isLoggedIn = (req.user !== undefined);
-
+                const currentUser = JSON.stringify(req.user._id)
+                const imAlreadyInTheCourse = JSON.stringify(course.enrolledUsers).includes(currentUser);
                 res.render('courses/details-course', {
                     ...hbsOptions,
                     isLoggedIn,
+                    imAlreadyInTheCourse,
                     username: req.user ? req.user.username : '',
                     isTheCreator: JSON.stringify(req.user._id) === JSON.stringify(course.creator)
                 });
             })
-        } 
+        },
+        
+        enrollForCourse(req, res) {
+            const {courseId} = req.params;
+            const userId = req.user._id;
+            console.log(courseId)
+            
+            Promise.all([
+            Model.updateOne({_id: courseId}, {$push: {enrolledUsers: userId}}),
+            User.updateOne({_id: userId}, {$push: {enrolledCourses: courseId}})
+        ]).then ((updatedModel, updatedUser)=>{
+            res.redirect(`/courses/details-course/${{courseId}}`)
+        }).catch((err)=> {
+            console.log(err.message)
+        })
+    },
+
+        deleteCourse(req, res) {
+            const {courseId} = req.params;
+            const userId = req.user._id
+
+            Promise.all([
+            Model.deleteOne({_id: courseId}, {$pull: {enrolledUsers: userId}}),
+            User.updateOne({_id: userId}, {$pull: {enrolledCourses: courseId}})
+        ]).then(([updatedModel, updatedUser])=>{
+            res.redirect('/home/')
+        })
+        }
     },
     post: {
         createCourse(req, res){
@@ -42,6 +71,7 @@ module.exports = {
             const creator = req.user._id
             Model.create({title, description, imageUrl, isPublic, createdAt, creator})
             .then(createdCourse => {
+                console.log(createdCourse)
                 
                 res.status(201).redirect('/home/')
             })

@@ -38,10 +38,10 @@ const modelSchema = new Schema({
         ref: 'User'
     },
 
-    enrolledUsers: {
+    enrolledUsers: [{
         type: ObjectId,
         ref: 'User'
-    }
+    }]
 
 });
 
