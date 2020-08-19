@@ -12,6 +12,9 @@
 <body>
     <div class="container">
         {{>navigation}}
+        {{#if message}}
+        {{> notifications}}
+        {{/if}}
         <main>
             {{{body}}}
         </main>

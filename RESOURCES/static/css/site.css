@@ -26,15 +26,24 @@
 }
 
 .notifications {
-    background-color: rgba(240, 46, 46, 0.699);
-    margin: 0 auto;
-    text-align: center;
-    padding: 1%;
-    margin-top: 2%;
-    margin-bottom: 2%;
-    border-radius: 6px;
+    /* display:none; */
+    margin: 2em;
+    padding: 1em;
+    position: absolute;
+    right: 0;
+    width: 20em;
+    border: 2px solid;
+    border-image-slice: 1;
+    border-radius: 1em;
     color: white;
-    font-style: italic;
-    text-decoration: underline;
-    box-shadow: 0 5px 10px #cccccc;
+}
+
+.success {
+    border-color: green;
+    background-color: rgba(4, 88, 4, 0.719);
+}
+
+.error {
+    background-color: rgba(245, 58, 136, 0.568);
+    border-color: rgba(255, 0, 0, 0.315);
 }

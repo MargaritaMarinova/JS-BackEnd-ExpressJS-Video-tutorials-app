@@ -12,11 +12,63 @@ module.exports = {
             });
         },
 
+        editCourse(req, res) {
+            const { courseId } = req.params;
+            const userId = req.user._id;
+            Model
+                .findById(courseId).lean().then((course) => {
+                    const isLoggedIn = (req.user !== undefined);
+                    res.render("courses/edit-course.hbs", {
+                        isLoggedIn,
+                        username: req.user ? req.user.username : null,
+                        course,
+                        courseId
+                    });
+                })
+
+        // editCourse(req, res) {
+        //     const {courseId} = req.params;
+        //     const {title, description, imageUrl, isPublic} = req.body
+        //     const isLoggedIn = (req.user !== undefined);
+        //     oldInput = {
+        //         title : req.body.title,
+        //         imageUrl: req.body.imageUrl, 
+        //         description: req.body.description}
+        //     Model
+        //     .findById(courseId)
+        //     .then((course) => {
+        //         res.render('courses/edit-course', {course})
+        //     })
+        // },
+        // editCourse(req, res) {
+        //     const {courseId} = req.params;
+        //     Model
+        //     .findById(courseId)
+        //     .populate('enrolledUsers')
+        //     .lean()
+        //     .then((course) => {
+        //         const hbsOptions = Object.keys(course).reduce((acc, curr) => {
+        //             acc[curr] = course[curr];
+        //             return acc;
+        //         }, {})
+        //         const isLoggedIn = (req.user !== undefined);
+        //         const currentUser = JSON.stringify(req.user._id)
+        //         const imAlreadyInTheCourse = JSON.stringify(course.enrolledUsers).includes(currentUser);
+        //         res.render('courses/edit-course', {
+        //             ...hbsOptions,
+        //             isLoggedIn,
+        //             imAlreadyInTheCourse,
+        //             username: req.user ? req.user.username : '',
+        //             isTheCreator: JSON.stringify(req.user._id) === JSON.stringify(course.creator)
+        //         });
+        //     })
+        },
+
         detailsCourse(req, res) {
             const {courseId} = req.params;
             Model
             .findById(courseId)
-            //.populate('enrolledUsers')
+            .populate('enrolledUsers')
             .lean()
             .then((course) => {
                 const hbsOptions = Object.keys(course).reduce((acc, curr) => {
@@ -38,14 +90,14 @@ module.exports = {
         
         enrollForCourse(req, res) {
             const {courseId} = req.params;
-            const userId = req.user._id;
+            const {_id} = req.user;
             console.log(courseId)
             
             Promise.all([
-            Model.updateOne({_id: courseId}, {$push: {enrolledUsers: userId}}),
-            User.updateOne({_id: userId}, {$push: {enrolledCourses: courseId}})
-        ]).then ((updatedModel, updatedUser)=>{
-            res.redirect(`/courses/details-course/${{courseId}}`)
+            Model.updateOne({_id: courseId}, {$push: {enrolledUsers: _id}}),
+            User.updateOne({_id}, {$push: {enrolledCourses: courseId}})
+        ]).then (([updatedModel, updatedUser])=>{
+            res.redirect(`/courses/details-course/${courseId}`)
         }).catch((err)=> {
             console.log(err.message)
         })
@@ -75,6 +127,36 @@ module.exports = {
                 
                 res.status(201).redirect('/home/')
             })
+        },
+        editCourse(req, res) {
+            const {courseId} = req.params;
+            const { title, description, imageUrl, isPublic: public } = req.body;        // isPublic: "on" || undefined
+            isPublic = !!public;
+            Model.findByIdAndUpdate({ _id: courseId }, {
+                "title": title,
+                "description": description,
+                "imageUrl": imageUrl,
+                "isPublic": isPublic
+            }).then((err, updated) => {
+                if (err) console.log("Update error:    ", err)
+                const isLoggedIn = (req.user !== undefined);
+                res.redirect(`/courses/details-course/${courseId}`)
+                
+            
+            })
         }
+
+        // editCourse(req, res){
+        //     const {courseId} = req.params;
+        //     const { title, description, imageUrl, isPublic} = req.body
+            
+        //     Model
+        //     .findByIdAndUpdate({_id: courseId}, {title, description, imageUrl, isPublic})
+        //         .then((course) => {
+        //         console.log(course)
+        //         res.redirect(`/courses/details-course/${courseId}`)
+                
+        //     })
+        // }
     }
 }
